@@ -87,5 +87,3 @@ esquisser <- function(data = NULL,
     viewer = inviewer
   )
 }
-
-

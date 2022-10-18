@@ -2,10 +2,10 @@ Package: esquisse
 Type: Package
 Title: Explore and Visualize Your Data Interactively
 Version: 1.1.2.9010
-Authors@R: c(person("Fanny", "Meyer", role = c("aut")),
-  person("Victor", "Perrier", email = "victor.perrier@dreamrs.fr", role = c("aut", "cre")),
-  person("Ian", "Carroll", comment = "Faceting support", role = "ctb"),
-  person("Xiangnan", "Dang", comment = "Facets rows and cols, X/Y limits", role = "ctb"),
+Authors@R: c(person("Jack", "Buckley", role = c("aut", "cre"), email = "buckleyjack4@gmail.com"),
+  person("Fanny", "Meyer", role = c("cph"), comment = "author of esquisser package"),
+  person("Victor", "Perrier", role = c("cph"), comment = "author of esquisser package"),
+  person("Xiangnan", "Dang", comment = "Facets rows and cols, X/Y limits", role = "cph"),
   person("Nicolas", "Bevacqua", role = "cph", comment = "author of dragula JavaScript library"),
   person("Daybrush (Younkue Choi)", role = "cph", comment = "author of moveable JavaScript library"),
   person("Zeno", "Rocha", role = "cph", comment = "author of clipboard JavaScript library"))

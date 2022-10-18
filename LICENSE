@@ -1,9 +1,25 @@
-YEAR: 2018
-COPYRIGHT HOLDER: dreamRs
+YEAR: 2022
+COPYRIGHT HOLDER: Jack Buckley
 
-The esquisse package as a whole is distributed under GPL-3 (GNU GENERAL PUBLIC
+This version of the esquisse package as a whole is distributed under GPL-3 (GNU GENERAL PUBLIC
 LICENSE version 3).
 
+The esquisse package includes other open source software components. The following
+is a list of these components (full copies of the license agreements used by
+these components are included below):
+
+- esquisse, https://github.com/dreamRs/esquisse
+- dragula, https://github.com/bevacqua/dragula
+- clipboard.js, https://github.com/zenorocha/clipboard.js
+
+
+
+esquisse license
+---------------
+
+GPL-3 (GNU GENERAL PUBLIC LICENSE version 3).
+
+Copyright © 2018 dreamRs
 
 The esquisse package includes other open source software components. The following
 is a list of these components (full copies of the license agreements used by
@@ -11,7 +27,6 @@ these components are included below):
 
 - dragula, https://github.com/bevacqua/dragula
 - clipboard.js, https://github.com/zenorocha/clipboard.js
-
 
 
 

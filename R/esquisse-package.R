@@ -7,7 +7,7 @@
 #'
 #' @name esquisse
 #' @docType package
-#' @author Fanny Meyer & Victor Perrier (@@dreamRs_fr)
+#' @author Jack Buckley (small edits to the original esquisse package created by Fanny Meyer & Victor Perrier (@@dreamRs_fr))
 #'
 #' @examples
 #' \dontrun{

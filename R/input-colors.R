@@ -1,4 +1,3 @@
-
 #' @title Picker input to select color(s) or palette
 #'
 #' @description Select menu to view and choose a color or a palette of colors.
