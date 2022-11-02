@@ -98,16 +98,14 @@ default_themes <- function() {
                "void")
   ggplot2 <- setNames(as.list(paste0("theme_", ggplot2)), ggplot2)
   
+  themes <- list()
+  
   if (requireNamespace("theme61", quietly = TRUE)) {
     e61_themes <- c("e61")
     e61_themes <- setNames(as.list(paste0("theme61::theme_", e61_themes)), e61_themes)
   }
   
-  print("I'm here")
-  
-  themes <- list(
-    e61_themes = e61_themes
-  )
+  themes$e61_themes <- e61_themes
   
   themes$ggplot2 <- ggplot2
   
