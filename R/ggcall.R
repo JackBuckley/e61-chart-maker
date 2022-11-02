@@ -37,12 +37,15 @@ ggcall <- function(data = NULL,
                    labs = list(), 
                    theme = NULL, 
                    theme_args = list(),
+                   alpha = 100,
                    facet = NULL,
                    facet_row = NULL,
                    facet_col = NULL,
                    facet_args = list(),
                    xlim = NULL,
                    ylim = NULL) {
+  
+  # Load data
   if (is.null(data))
     return(expr(ggplot()))
   if (!is_call(data)) {
@@ -53,11 +56,15 @@ ggcall <- function(data = NULL,
       data <- sym(data)
     }
   }
+  
+  # Load mapping
   if (rlang::is_call(mapping)) 
     mapping <- eval(mapping)
-  mapping <- dropNulls(mapping)
-  aes <- expr(aes(!!!syms2(mapping)))
-  ggcall <- expr(ggplot(!!data) + !!aes)
+    mapping <- dropNulls(mapping)
+    aes <- expr(aes(!!!syms2(mapping)))
+    ggcall <- expr(ggplot(!!data) + !!aes)
+    
+  # Load geom
   if (length(geom) == 1)
     geom_args <- setNames(list(geom_args), geom)
   for (g in geom) {
@@ -67,6 +74,8 @@ ggcall <- function(data = NULL,
     geom <- call2(g, !!!g_args)
     ggcall <- expr(!!ggcall + !!geom)
   }
+    
+  # load scales
   if (!is.null(scales)) {
     if (length(scales) == 1 && !isTRUE(grepl(scales, names(scales_args))))
       scales_args <- setNames(list(scales_args), scales)
@@ -76,24 +85,30 @@ ggcall <- function(data = NULL,
         scl <- strsplit(x = s, split = "::")[[1]]
         scl <- call2(scl[2], !!!s_args, .ns = scl[1])
       } else {
-        if (!grepl("^scale_", s))
-          s <- paste0("scale_", s)
+        # if (!grepl("^scale_", s))
+        #   s <- paste0("scale_", s)
         scl <- call2(s, !!!s_args)
       }
       ggcall <- expr(!!ggcall + !!scl)
     }
   }
+    
+  # labels
   labs <- dropNullsOrEmpty(labs)
   if (length(labs) > 0) {
     labs <- expr(labs(!!!labs))
     ggcall <- expr(!!ggcall + !!labs)
   }
+  
+  # coordinates
   if (!is.null(coord)) {
     if (!grepl("^coord_", coord))
       coord <- paste0("coord_", coord)
     coord <- call2(coord)
     ggcall <- expr(!!ggcall + !!coord)
   }
+  
+  # theme
   if (!is.null(theme)) {
     if (grepl("::", x = theme)) {
       theme <- strsplit(x = theme, split = "::")[[1]]
@@ -101,18 +116,23 @@ ggcall <- function(data = NULL,
     } else {
       if (!grepl("^theme_", theme))
         theme <- paste0("theme_", theme)
-      theme <- call2(theme)
+        theme <- call2(theme)
     }
     ggcall <- expr(!!ggcall + !!theme)
   }
+  
+  
   if (!any(c("fill", "colour", "color", "size", "shape") %in% names(mapping))) {
     theme_args$legend.position <- NULL
   }
+  
   theme_args <- dropNullsOrEmpty(theme_args)
   if (length(theme_args) > 0) {
     theme_args <- call2("theme", !!!theme_args)
     ggcall <- expr(!!ggcall + !!theme_args)
   }
+  
+  # facet options
   if (!is.null(facet)) {
     facet_args <- dropNullsOrEmpty(facet_args)
     if (length(facet_args) > 0) {
@@ -135,6 +155,7 @@ ggcall <- function(data = NULL,
     }
   }
   
+  # xlim options
   if (has_length(xlim, 2)) {
     xlim <- expr(xlim(!!!as.list(xlim)))
     ggcall <- expr(!!ggcall + !!xlim)

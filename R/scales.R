@@ -111,7 +111,7 @@ which_pal_scale <- function(mapping,
   
   # Option 2: known palette
   palettes <- unlist(lapply(default_pals()$choices, names), recursive = TRUE, use.names = FALSE)
-  if (isTRUE(palette %in% palettes)) {
+  if (isTRUE(palette %in% palettes) & !grepl(palette, "base")) {
     scale_pal_d <- function(pal, aesthetic) {
       if (pal == "ggplot2") {
         s_p <- "hue"
@@ -128,8 +128,10 @@ which_pal_scale <- function(mapping,
       if (palette %in% c("ipsum", "ft")) {
         scl <- paste0("hrbrthemes::", scl)
       }
+      
       return(scl)
     }
+    
     scale_pal_c <- function(pal, aesthetic) {
       if (pal == "ggplot2") {
         s_p <- "gradient"
@@ -146,8 +148,12 @@ which_pal_scale <- function(mapping,
       if (palette %in% c("ipsum", "ft")) {
         scl <- paste0("hrbrthemes::", scl)
       }
+      
       return(scl)
     }
+    
+    print(palette)
+    
     if (!is.null(mapping$fill)) {
       fill_scale <- switch(
         fill_type,
@@ -163,16 +169,20 @@ which_pal_scale <- function(mapping,
           args[[fill_scale]] <- NULL
         }
       }
+    
       if (!endsWith(fill_scale, "gradient") & isTRUE(reverse)) {
         args[[fill_scale]] <- c(args[[fill_scale]], list(direction = -1))
       }
       if (!endsWith(fill_scale, "gradient") & !isTRUE(reverse)) {
         args[[fill_scale]] <- c(args[[fill_scale]], list(direction = 1))
       }
+
     } else {
       fill_scale <- NULL
     }
+    
     if (!is.null(mapping$colour)) {
+      
       color_scale <- switch(
         color_type,
         "discrete" = scale_pal_d(palette, "color"),
@@ -193,16 +203,52 @@ which_pal_scale <- function(mapping,
       if (!endsWith(color_scale, "gradient") & !isTRUE(reverse)) {
         args[[color_scale]] <- c(args[[color_scale]], list(direction = 1))
       }
+      
     } else {
       color_scale <- NULL
     }
+    
     return(list(
       scales = c(fill_scale, color_scale),
       args = args
     ))
   }
   
-  # Option 3: custom palette
+  # Option 3: e61 palette
+  if(palette %in% c("base")){
+  
+    if (!is.null(mapping$fill)) {
+      fill_scale <- switch(
+        fill_type,
+        "discrete" = "scale_fill_manual",
+        "continuous" = "scale_fill_gradientn"
+      )
+      args[[fill_scale]] <- switch(
+        fill_type,
+        "discrete" = list(values = palette),
+        "continuous" = list(colours = palette)
+      )
+    } else {
+      fill_scale <- NULL
+    }
+    if (!is.null(mapping$colour)) {
+      color_scale <- switch(
+        color_type,
+        "discrete" = "scale_color_manual",
+        "continuous" = "scale_color_gradientn"
+      )
+      args[[color_scale]] <- switch(
+        color_type,
+        "discrete" = list(values = palette),
+        "continuous" = list(colours = palette)
+      )
+    } else {
+      color_scale <- NULL
+    }
+  }
+  
+  
+  # Option 4: custom palette
   palettes <- get_palettes()$choices
   if (isTRUE(palette %in% names(palettes))) {
     palette <- palettes[[palette]]
@@ -225,6 +271,7 @@ which_pal_scale <- function(mapping,
   } else {
     fill_scale <- NULL
   }
+  
   if (!is.null(mapping$colour)) {
     color_scale <- switch(
       color_type,

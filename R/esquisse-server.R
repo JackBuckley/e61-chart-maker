@@ -285,6 +285,7 @@ esquisse_server <- function(id,
           )
 
         }
+        
         if (!is.null(aes_input$ymin) & !is.null(aes_input$ymax) & input$geom %in% c("line")) {
           geom <- c("ribbon", geom)
           mapping_ribbon <- aes_input[c("ymin", "ymax")]
@@ -301,7 +302,7 @@ esquisse_server <- function(id,
 
         scales_args <- scales$args
         scales <- scales$scales
-
+        
         if (isTRUE(controls_rv$transX$use)) {
           scales <- c(scales, "x_continuous")
           scales_args <- c(scales_args, list(x_continuous = controls_rv$transX$args))
@@ -323,6 +324,7 @@ esquisse_server <- function(id,
           ylim <- NULL
         }
         data_name <- data_chart$name %||% "data"
+        
         gg_call <- ggcall(
           data = data_name,
           mapping = mapping,
@@ -334,6 +336,7 @@ esquisse_server <- function(id,
           theme = controls_rv$theme$theme,
           theme_args = controls_rv$theme$args,
           coord = controls_rv$coord,
+          alpha = input$dragvars$target$alpha,
           facet = input$dragvars$target$facet,
           facet_row = input$dragvars$target$facet_row,
           facet_col = input$dragvars$target$facet_col,
@@ -349,6 +352,7 @@ esquisse_server <- function(id,
           expr = expr((!!gg_call) %+% !!sym("esquisse_data")),
           data = setNames(list(data, data), c("esquisse_data", data_chart$name))
         )
+        
         ggplotCall$ggobj$plot
       }, filename = "esquisse-plot")
 

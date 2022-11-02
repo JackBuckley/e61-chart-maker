@@ -6,7 +6,10 @@
 default_pals <- function() {
   pals <- list(
     choices = list(
-      Default = list("ggplot2" = hue_pal()(9)),
+      e61 = list(
+        "base" = e61_palette(10)
+      ),
+      `ggplot default` = list("ggplot2" = hue_pal()(9)),
       Viridis = list(
         "viridis" = viridis_pal(option = "viridis")(10),
         "magma" = viridis_pal(option = "magma")(10),
@@ -24,7 +27,7 @@ default_pals <- function() {
         "RdYlBu" = brewer_pal(palette = "RdYlBu")(11), 
         "RdYlGn" = brewer_pal(palette = "RdYlGn")(11), 
         "Spectral" = brewer_pal(palette = "Spectral")(11)
-      ), 
+      ),
       Qualitative = list(
         "Accent" = brewer_pal(palette = "Accent")(8),
         "Dark2" = brewer_pal(palette = "Dark2")(8), 
@@ -65,7 +68,6 @@ default_pals <- function() {
 
 
 
-
 # Get list of palettes
 get_palettes <- function() {
   pals <- getOption("esquisse.palettes")
@@ -76,12 +78,12 @@ get_palettes <- function() {
   if (!is.list(pals)) {
     stop("Option 'esquisse.palettes' must be a list with at least one slot : 'choices'", call. = FALSE)
   }
-  if (is.null(pals$textColor))
+  if (is.null(pals$textColor)){
     pals$textColor <- "white"
+  }
+  
   pals
 }
-
-
 
 
 
@@ -92,13 +94,22 @@ get_palettes <- function() {
 #'  theme_light theme_linedraw theme_minimal theme_void
 default_themes <- function() {
   ggplot2 <- c("bw", "classic", "dark", "gray",
-               "light", "linedraw", "minimal",
+               "light", "linedraw", #"minimal",
                "void")
   ggplot2 <- setNames(as.list(paste0("theme_", ggplot2)), ggplot2)
   
+  if (requireNamespace("theme61", quietly = TRUE)) {
+    e61_themes <- c("e61")
+    e61_themes <- setNames(as.list(paste0("theme61::theme_", e61_themes)), e61_themes)
+    themes$e61_themes <- e61_themes
+  }
+  
   themes <- list(
-    ggplot2 = ggplot2
+    e61_themes = e61_themes
   )
+  
+  themes$ggplot2 <- ggplot2
+  
   if (requireNamespace("ggthemes", quietly = TRUE)) {
     ggthemes <- c(
       "base", "calc", "economist", "economist_white",
@@ -161,7 +172,6 @@ get_themes <- function() {
   )
   dropNullsOrEmptyRecursive(themes)
 }
-
 
 
 

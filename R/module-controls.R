@@ -196,7 +196,9 @@ controls_server <- function(id,
         updateTextInput(session = session, inputId = "labs_subtitle", value = character(0))
         updateTextInput(session = session, inputId = "labs_caption", value = character(0))
         updateTextInput(session = session, inputId = "labs_x", value = character(0))
+        updateTextInput(session = session, inputId = "axis_x", value = character(0))
         updateTextInput(session = session, inputId = "labs_y", value = character(0))
+        updateTextInput(session = session, inputId = "axis_y", value = character(0))
         updateTextInput(session = session, inputId = "labs_fill", value = character(0))
         updateTextInput(session = session, inputId = "labs_color", value = character(0))
         updateTextInput(session = session, inputId = "labs_size", value = character(0))
@@ -248,6 +250,7 @@ controls_server <- function(id,
         toggleDisplay(id = ns("controls-labs-fill"), display = "fill" %in% aesthetics)
         toggleDisplay(id = ns("controls-labs-color"), display = "color" %in% aesthetics)
         toggleDisplay(id = ns("controls-labs-size"), display = "size" %in% aesthetics)
+        toggleDisplay(id = ns("controls-alpha"), display = "alpha" %in% aesthetics)
         toggleDisplay(id = ns("controls-labs-shape"), display = "shape" %in% aesthetics)
         toggleDisplay(id = ns("controls-ribbon-color"), display = "ymin" %in% aesthetics)
       })
@@ -382,8 +385,18 @@ controls_server <- function(id,
           ylim = input$ylim
         )
       })
-
-
+      
+      # alpha input
+      observe({
+        outputs$alpha <- list(
+          alpha = if (is.null(input$alpha)) {
+            NULL
+          } else {
+            input$alpha
+          }
+        )
+      })
+      
       # facet input
       observe({
         outputs$facet <- list(
@@ -524,6 +537,18 @@ controls_labs <- function(ns) {
       label = i18n("Y label:"),
       defaults = get_labs_defaults("y")
     ),
+    labs_options_input(
+      inputId = ns("axis_y"),
+      placeholder = i18n("Y axis"),
+      label = i18n("Y axis:"),
+      defaults = get_labs_defaults("y")
+    ),
+    labs_options_input(
+      inputId = ns("axis_x"),
+      placeholder = i18n("X axis"),
+      label = i18n("X axis:"),
+      defaults = get_labs_defaults("x")
+    ),
     tags$div(
       id = ns("controls-labs-fill"),
       style = "display: none;",
@@ -618,11 +643,13 @@ labs_options_input <- function(inputId, label, placeholder, defaults = list()) {
 get_labs_defaults <- function(name = c("title", "subtitle", "caption", "x", "y")) {
   name <- match.arg(name)
   defaults_labs <- list(
-    title = list(size = 13L, face = "plain", hjust = 0), # theme_get()$plot.title
-    subtitle = list(size = 11L, face = "plain", hjust = 0), # theme_get()$plot.subtitle
+    title = list(size = 20L, face = "bold", hjust = 0), # theme_get()$plot.title
+    subtitle = list(size = 16L, face = "plain", hjust = 0), # theme_get()$plot.subtitle
     caption = list(size = 9L, face = "plain", hjust = 1), # theme_get()$plot.caption
-    x = list(size = 11L, face = "plain", hjust = 0.5),
-    y = list(size = 11L, face = "plain", hjust = 0.5)
+    x = list(size = 14L, face = "plain", hjust = 0.5),
+    y = list(size = 14L, face = "plain", hjust = 0.5),
+    y_axis = list(size = 14L, face = "plain", hjust = 0.5),
+    x_axis = list(size = 14L, face = "plain", hjust = 0.5)
   )
   defaults_labs[[name]]
 }
@@ -735,6 +762,17 @@ controls_appearance <- function(ns) {
         choices = shape_names,
         selected = "circle",
         options = list(size = 10, container = "body"),
+        width = "100%"
+      )
+    ),
+    tags$div(
+      id = ns("controls-alpha"), style = "display: none;",
+      sliderInput(
+        inputId = ns("alpha"),
+        label = i18n("Set transparency (alpha):"),
+        min = 0,
+        max = 100,
+        value = 100,
         width = "100%"
       )
     ),

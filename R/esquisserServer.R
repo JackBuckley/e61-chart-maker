@@ -206,7 +206,6 @@ esquisserServer <- function(input,
     })
   )
 
-
   output$plooooooot <- renderPlot({
     req(input$play_plot, cancelOutput = TRUE)
     req(dataChart$data)
@@ -325,4 +324,3 @@ esquisserServer <- function(input,
 
   return(output_module)
 }
-

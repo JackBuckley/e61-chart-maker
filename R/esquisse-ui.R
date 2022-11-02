@@ -61,15 +61,15 @@ esquisse_ui <- function(id,
       class = "pull-left",
       actionButton(
         inputId = ns("launch_import_data"),
-        label = ph("database", height = "2em", title = i18n("Import data")),
+        label = ph("database", height = "2em", title = i18n("Import data - test")),
         class = "btn-sm",
-        title = i18n("Import data")
+        title = i18n("Import data - test")
       ),
       actionButton(
         inputId = ns("show_data"),
-        label = ph("table", height = "2em", title = i18n("Show data")),
+        label = ph("table", height = "2em", title = i18n("Show data - test")),
         class = "btn-sm",
-        title = i18n("Show data")
+        title = i18n("Show data - test")
       )
     )
   )
@@ -175,4 +175,3 @@ esquisseContainer <- function(width = "100%", height = "700px", fixed = FALSE) {
     )
   }
 }
-
