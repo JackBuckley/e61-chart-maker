@@ -7,7 +7,7 @@ default_pals <- function() {
   pals <- list(
     choices = list(
       e61 = list(
-        "base" = e61_palette(10)
+        "base" = theme61::e61_palette(10)
       ),
       `ggplot default` = list("ggplot2" = hue_pal()(9)),
       Viridis = list(

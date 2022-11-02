@@ -15,6 +15,7 @@ ggcall(
   labs = list(),
   theme = NULL,
   theme_args = list(),
+  alpha = 100,
   facet = NULL,
   facet_row = NULL,
   facet_col = NULL,
