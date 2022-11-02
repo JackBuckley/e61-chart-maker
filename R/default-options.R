@@ -103,6 +103,8 @@ default_themes <- function() {
     e61_themes <- setNames(as.list(paste0("theme61::theme_", e61_themes)), e61_themes)
   }
   
+  print("I'm here")
+  
   themes <- list(
     e61_themes = e61_themes
   )
