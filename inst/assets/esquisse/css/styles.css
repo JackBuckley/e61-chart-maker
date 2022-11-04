@@ -25,7 +25,7 @@
   -ms-flex: none;
   flex: none;
   position: relative;
-  background-color: #112446;
+  background-color: #008080;
   height: 45px;
   margin-bottom: 5px;
   padding: 0;
@@ -39,17 +39,17 @@
   line-height: 44px;
   margin: 0;
   z-index: 0;
-  color: white;
+  color: #008080;
   text-align: center;
   font-size: 30px;
-  font-family: 'Annie Use Your Telescope', handwriting;
+  font-family: 'Roboto', sans-serif;
 }
 
 .esquisse-title-container button.btn {
   position: relative;
   height: 31px;
   z-index: 10;
-  color: #FFF;
+  color: #008080;
   background: transparent;
   border: none;
   margin: 7px 5px 0px 5px;

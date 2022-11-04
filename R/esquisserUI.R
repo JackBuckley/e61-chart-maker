@@ -41,7 +41,7 @@ esquisserUI <- function(id, header = TRUE,
 
   box_title <- tags$div(
     class = "esquisse-title-container",
-    tags$h1("Esquisse", class = "esquisse-title"),
+    tags$h1("e61 Chart Maker", class = "esquisse-title"),
     tags$div(
       class = "pull-right",
       actionButton(
@@ -49,7 +49,7 @@ esquisserUI <- function(id, header = TRUE,
         label = NULL,
         icon = icon("gear", class = "fa-lg"),
         class = "btn-sm",
-        title = "Display settings"
+        title = "Test settings"
       ),
       actionButton(
         inputId = ns("close"),

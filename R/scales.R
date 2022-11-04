@@ -49,7 +49,7 @@
 #'   fill_type = "continuous"
 #' )
 which_pal_scale <- function(mapping, 
-                            palette = "ggplot2", 
+                            palette = "base", 
                             data = NULL,
                             fill_type = c("continuous", "discrete"), 
                             color_type = c("continuous", "discrete"),

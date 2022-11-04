@@ -41,7 +41,7 @@ esquisse_ui <- function(id,
   ns <- NS(id)
   tag_header <- tags$div(
     class = "esquisse-title-container",
-    tags$h1("Esquisse", class = "esquisse-title"),
+    tags$h1("e61 Chart Maker", class = "esquisse-title"),
     tags$div(
       class = "pull-right float-end",
       actionButton(

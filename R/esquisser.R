@@ -67,7 +67,7 @@ esquisser <- function(data = NULL,
   } else {
     inviewer <- dialogViewer(
       paste(
-        "Le petit prince, qui me posait beaucoup de questions, ne semblait jamais entendre les miennes."
+        "e61 chart maker"
       ),
       width = 1100,
       height = 750
