@@ -10,7 +10,7 @@
   position: relative;
   padding: 5px 0 5px 0;
   border-style: dashed;
-  border-color: #112446;
+  border-color: #008080;
   border-radius: 5px;
   border-width: 1px;
   overflow: auto;
@@ -24,7 +24,7 @@
   margin: 5px;
   margin-top: 8px;
   border-style: dashed;
-  border-color: #112446;
+  border-color: #008080;
   border-radius: 3px;
   border-width: 1px;
   overflow: auto;

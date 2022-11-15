@@ -161,7 +161,7 @@ esquisserServer <- function(input,
     geoms <- c(
       "auto", "line", "area", "bar", "histogram",
       "point", "boxplot", "violin", "density",
-      "tile", "sf"
+      "tile", "sf", "density_ridges"
     )
     updateDropInput(
       session = session,

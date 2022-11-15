@@ -66,9 +66,7 @@ esquisser <- function(data = NULL,
     inviewer <- paneViewer(minHeight = "maximize")
   } else {
     inviewer <- dialogViewer(
-      paste(
-        "e61 chart maker"
-      ),
+      paste("e61 chart maker"),
       width = 1100,
       height = 750
     )

@@ -61,15 +61,15 @@ esquisse_ui <- function(id,
       class = "pull-left",
       actionButton(
         inputId = ns("launch_import_data"),
-        label = ph("database", height = "2em", title = i18n("Import data - test")),
+        label = ph("database", height = "2em", title = i18n("Import data")),
         class = "btn-sm",
-        title = i18n("Import data - test")
+        title = i18n("Import data")
       ),
       actionButton(
         inputId = ns("show_data"),
-        label = ph("table", height = "2em", title = i18n("Show data - test")),
+        label = ph("table", height = "2em", title = i18n("Show data")),
         class = "btn-sm",
-        title = i18n("Show data - test")
+        title = i18n("Show data")
       )
     )
   )

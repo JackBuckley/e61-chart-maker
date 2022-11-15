@@ -30,6 +30,7 @@
   margin-bottom: 5px;
   padding: 0;
 }
+
 .esquisse-title {
   position: absolute;
   top: 0;
@@ -39,7 +40,7 @@
   line-height: 44px;
   margin: 0;
   z-index: 0;
-  color: #008080;
+  color: #FFFFFF;
   text-align: center;
   font-size: 30px;
   font-family: 'Roboto', sans-serif;
@@ -49,7 +50,7 @@
   position: relative;
   height: 31px;
   z-index: 10;
-  color: #008080;
+  color: #FFFFFF;
   background: transparent;
   border: none;
   margin: 7px 5px 0px 5px;

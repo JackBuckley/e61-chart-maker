@@ -101,13 +101,14 @@ potential_geoms_ref <- function() {
       "continuous",  "discrete",    "point",     "0",
       "continuous",  "discrete",    "jitter",    "0",
       "continuous",  "discrete",    "violin",    "0",
+      "continuous",  "discrete",    "density_ridges",    "0",
       "continuous",  "discrete",    "bar",       "1",
       "discrete",    "continuous",  "col",       "1",
       "discrete",    "continuous",  "bar",       "0",
       "discrete",    "continuous",  "boxplot",   "0",
       "discrete",    "continuous",  "point",     "0",
       "discrete",    "continuous",  "jitter",    "0",
-      "discrete",    "continuous",  "violin",    "0",
+      "discrete",    "continuous",  "violin",    "0", 
       "continuous",  "continuous",  "point",     "1",
       "continuous",  "continuous",  "jitter",    "0",
       "continuous",  "continuous",  "line",      "0",
@@ -165,30 +166,50 @@ potential_geoms_ref <- function() {
 #' match_geom_args(geom = "bar", args = params, add_aes = FALSE)
 #' match_geom_args(geom = "point", args = params)
 #' match_geom_args(geom = "point", args = params, add_aes = FALSE)
+
+args <- list(
+  bins = 30,
+  scale = "width",
+  adjust = 2,
+  position = "stack",
+  size = 1.6,
+  fill = "#112246"
+)
+
 match_geom_args <- function(geom, args, add_aes = TRUE, mapping = list(), envir = "ggplot2") {
+  
   if (!is.null(args$fill_color)) {
-    if (geom %in% c("bar", "col", "histogram", "boxplot", "violin", "density")) {
+    if (geom %in% c("bar", "col", "histogram", "boxplot", "violin", "density", "density_ridges")) {
       args$fill <- args$fill_color %||% "#0C4C8A"
     }
     if (geom %in% c("line", "step", "point")) {
       args$colour <- args$fill_color %||% "#0C4C8A"
     }
   }
-  if (geom %in% c("bar", "col", "histogram", "boxplot", "violin", "density")) {
+  
+  if (geom %in% c("bar", "col", "histogram", "boxplot", "violin", "density", "density_ridges")) {
     args$size <- NULL
   }
+  
   if (identical(args$position, "stack")) {
     args$position <- NULL
   }
+  
   if (!geom %in% c("bar", "histogram")) {
     args$position <- NULL
   }
+  
   pkg_envir <- getNamespace(envir)
+  
   if (!grepl(pattern = "^geom_", x = geom))
     geom <- paste0("geom_", geom)
+  
   geom_args <- try(formals(fun = get(geom, envir = pkg_envir)), silent = TRUE)
+  
   if (inherits(geom_args, "try-error"))
-    stop(paste(geom, "not found in", envir), call. = FALSE)
+   stop(paste(geom, "not found in", envir), call. = FALSE)
+
+  
   if (!is.null(geom_args$stat)) {
     stat_args <- try(
       formals(fun = get(paste0("stat_", geom_args$stat), envir = pkg_envir)),
@@ -198,6 +219,7 @@ match_geom_args <- function(geom, args, add_aes = TRUE, mapping = list(), envir 
       geom_args <- c(geom_args, stat_args)
     }
   }
+  
   if (isTRUE(add_aes)) {
     GeomFun <- paste0("Geom", capitalize(gsub("geom_", "", geom)))
     GeomFun <- try(get(GeomFun, envir = pkg_envir), silent = TRUE)
@@ -210,6 +232,7 @@ match_geom_args <- function(geom, args, add_aes = TRUE, mapping = list(), envir 
       geom_args <- c(geom_args, setNames(aes_args, aes_args))
     }
   }
+  
   args[names(args) %in% setdiff(names(geom_args), names(mapping))]
 }
 

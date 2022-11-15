@@ -250,7 +250,7 @@ controls_server <- function(id,
         toggleDisplay(id = ns("controls-labs-fill"), display = "fill" %in% aesthetics)
         toggleDisplay(id = ns("controls-labs-color"), display = "color" %in% aesthetics)
         toggleDisplay(id = ns("controls-labs-size"), display = "size" %in% aesthetics)
-        toggleDisplay(id = ns("controls-alpha"), display = "alpha" %in% aesthetics)
+        # toggleDisplay(id = ns("controls-alpha"), display = "fill" %in% aesthetics)
         toggleDisplay(id = ns("controls-labs-shape"), display = "shape" %in% aesthetics)
         toggleDisplay(id = ns("controls-ribbon-color"), display = "ymin" %in% aesthetics)
       })
@@ -426,7 +426,7 @@ controls_server <- function(id,
           theme = input$theme,
           args = dropNulls(
             list(
-              legend.position = if (identical(input$legend_position, "right")) NULL else input$legend_position,
+              legend.position = if(input$legend_position != "none") input$legend_position,
               plot.title = title,
               plot.subtitle = subtitle,
               plot.caption = caption,
@@ -442,6 +442,11 @@ controls_server <- function(id,
         outputs$coord <- if (isTRUE(input$flip)) "flip" else NULL
       })
 
+      # e61 logo input
+      observe({
+        outputs$add_logo <- if (isTRUE(input$add_logo)) TRUE else FALSE
+      })
+      
       # smooth input
       observe({
         outputs$smooth <- list(
@@ -766,13 +771,13 @@ controls_appearance <- function(ns) {
       )
     ),
     tags$div(
-      id = ns("controls-alpha"), style = "display: none;",
+      id = ns("controls-alpha"), style = "display: block;",
       sliderInput(
         inputId = ns("alpha"),
         label = i18n("Set transparency (alpha):"),
         min = 0,
-        max = 100,
-        value = 100,
+        max = 1,
+        value = 1,
         width = "100%"
       )
     ),
@@ -798,7 +803,7 @@ controls_appearance <- function(ns) {
         ph("x")
       ),
       choiceValues = c("left", "top", "bottom", "right", "none"),
-      selected = "right",
+      selected = "none",
       justified = TRUE,
       size = "sm"
     )
@@ -998,6 +1003,19 @@ controls_params <- function(ns) {
     ),
     prettyToggle(
       inputId = ns("flip"),
+      label_on = i18n("Yes"),
+      status_on = "success",
+      status_off = "danger",
+      label_off = i18n("No"),
+      inline = TRUE
+    ),
+    tags$label(
+      class = "control-label",
+      `for` = ns("add_logo"),
+      i18n("Add e61 logo:")
+    ),
+    prettyToggle(
+      inputId = ns("add_logo"),
       label_on = i18n("Yes"),
       status_on = "success",
       status_off = "danger",

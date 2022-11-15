@@ -48,7 +48,7 @@ default_themes <- function() {
   
   if (requireNamespace("theme61", quietly = TRUE)) {
     e61_themes <- c("e61")
-    e61_themes <- setNames(as.list(paste0("theme61::theme_", e61_themes)), e61_themes)
+    e61_themes <- setNames(as.list(paste0("theme_", e61_themes)), e61_themes)
   }
   
   themes$e61_themes <- e61_themes

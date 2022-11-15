@@ -31,7 +31,8 @@ Imports:
     shiny (>= 1.1.0),
     shinyWidgets (>= 0.6.0),
     theme61,
-    data.table
+    data.table,
+    ggridges
 Suggests: 
     officer,
     rvg,

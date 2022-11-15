@@ -181,7 +181,7 @@ esquisse_server <- function(id,
         geoms <- c(
           "auto", "line", "area", "bar", "col", "histogram",
           "point", "jitter", "boxplot", "violin", "density",
-          "tile", "sf"
+          "density_ridges", "tile", "sf"
         )
         updateDropInput(
           session = session,
@@ -229,7 +229,7 @@ esquisse_server <- function(id,
         })
       )
 
-
+      # Render the ggplot
       render_ggplot("plooooooot", {
         req(input$play_plot, cancelOutput = TRUE)
         req(data_chart$data)
@@ -261,14 +261,18 @@ esquisse_server <- function(id,
           data = data,
           reverse = controls_rv$colors$reverse
         )
-
+        
         if (identical(input$geom, "auto")) {
           geom <- "blank"
         } else {
           geom <- input$geom
         }
-
-        geom_args <- match_geom_args(input$geom, controls_rv$inputs, mapping = mapping)
+        
+        if(input$geom == "density_ridges"){
+          geom_args <- match_geom_args(input$geom, controls_rv$inputs, mapping = mapping, envir = "ggridges")
+        } else {
+          geom_args <- match_geom_args(input$geom, controls_rv$inputs, mapping = mapping)
+        }
 
         if (isTRUE(controls_rv$smooth$add) & input$geom %in% c("point", "line")) {
           geom <- c(geom, "smooth")
@@ -299,7 +303,8 @@ esquisse_server <- function(id,
           mapping$ymin <- NULL
           mapping$ymax <- NULL
         }
-
+        
+        
         scales_args <- scales$args
         scales <- scales$scales
         
@@ -323,6 +328,7 @@ esquisse_server <- function(id,
         } else {
           ylim <- NULL
         }
+        
         data_name <- data_chart$name %||% "data"
         
         gg_call <- ggcall(
@@ -336,7 +342,8 @@ esquisse_server <- function(id,
           theme = controls_rv$theme$theme,
           theme_args = controls_rv$theme$args,
           coord = controls_rv$coord,
-          alpha = input$dragvars$target$alpha,
+          add_logo = controls_rv$add_logo,
+          alpha = controls_rv$alpha,
           facet = input$dragvars$target$facet,
           facet_row = input$dragvars$target$facet_row,
           facet_col = input$dragvars$target$facet_col,
@@ -345,7 +352,11 @@ esquisse_server <- function(id,
           ylim = ylim
         )
 
-        ggplotCall$code <- deparse2(gg_call)
+        # save text
+        ggplotCall$code <- gg_call
+        
+        # convert to an expression
+        gg_call <- eval(parse(text = gg_call))
         ggplotCall$call <- gg_call
 
         ggplotCall$ggobj <- safe_ggplot(
