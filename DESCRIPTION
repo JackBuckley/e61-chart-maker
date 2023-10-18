@@ -33,6 +33,7 @@ Imports:
     theme61,
     data.table,
     ggridges
+Remotes: github::e61-Institute/theme61
 Suggests: 
     officer,
     rvg,

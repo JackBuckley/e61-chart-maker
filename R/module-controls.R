@@ -385,7 +385,7 @@ controls_server <- function(id,
           ylim = input$ylim
         )
       })
-      
+
       # alpha input
       observe({
         outputs$alpha <- list(
@@ -396,7 +396,7 @@ controls_server <- function(id,
           }
         )
       })
-      
+
       # facet input
       observe({
         outputs$facet <- list(
@@ -446,7 +446,7 @@ controls_server <- function(id,
       observe({
         outputs$add_logo <- if (isTRUE(input$add_logo)) TRUE else FALSE
       })
-      
+
       # smooth input
       observe({
         outputs$smooth <- list(

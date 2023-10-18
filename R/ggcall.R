@@ -21,93 +21,131 @@
 #'
 #' @return a \code{call} that can be evaluated with \code{eval}.
 #' @export
-#' 
+#'
 #' @importFrom stats setNames
 #' @importFrom rlang sym syms expr as_name is_call call2 has_length
 #' @importFrom ggplot2 ggplot aes theme facet_wrap vars coord_flip labs
 #'
 #' @example examples/ex-ggcall.R
 ggcall <- function(data = NULL,
-                   mapping = NULL, 
-                   geom = NULL, 
+                   mapping = NULL,
+                   geom = NULL,
                    geom_args = list(),
-                   scales = NULL, 
+                   scales = NULL,
                    scales_args = list(),
                    coord = NULL,
                    add_logo = FALSE,
-                   labs = list(), 
-                   theme = NULL, 
+                   labs = list(),
+                   theme = NULL,
                    theme_args = list(),
-                   alpha = 100,
+                   alpha = NULL,
                    facet = NULL,
                    facet_row = NULL,
                    facet_col = NULL,
                    facet_args = list(),
                    xlim = NULL,
                    ylim = NULL) {
-  
+
   # Load data
   if (is.null(data))
     return(expr(ggplot()))
   if (!is_call(data)) {
     data <- as.character(data)
     if (grepl("::", data)) {
-      data <- str2lang(data) 
+      data <- str2lang(data)
     } else {
       data <- sym(data)
     }
   }
-  
+
   # Load mapping
-  if (rlang::is_call(mapping)) 
+  if (rlang::is_call(mapping))
     mapping <- eval(mapping)
     mapping <- dropNulls(mapping)
 
     aes <- expr(aes(!!!syms2(mapping)))
-    
+    aes <- deparse(aes)
+    aes <- gsub("\\)$", "", aes)
+
   # add alpha
-  if(!is.null(alpha)){
-   aes <- deparse(aes)
-   aes <- gsub("\\)$", "", aes)
+  if(!is.null(alpha) & alpha != 1){
+
    aes <- paste0(aes, ", alpha = ", alpha, ")")
+  } else {
+    aes <- paste0(aes, ")")
   }
-  
-  ggcall <- paste0("ggplot(", data, ") + ", aes)
-  
+
+  ggcall <- paste0("theme61::ggplot(", data, ", ", aes, ")")
+
   # if(geom == "density_ridges"){
   #   geom_temp <<- geom
   #   geom_args_temp <<- geom_args
   #   ggcall_temp <<- ggcall
-  # 
+  #
   #   stop()
   # }
-  
+
+  # facet options
+  if (!is.null(facet)) {
+    facet_args <- dropNullsOrEmpty(facet_args)
+    if (length(facet_args) > 0) {
+      facet <- paste0("facet_wrap(vars(", facet, "), ", facet_args, ")")
+      ggcall <- paste0(ggcall, " + ", facet)
+    } else {
+      facet <- paste0("facet_wrap(vars(", facet, "))")
+      ggcall <- paste0(ggcall, " + ", facet)
+    }
+
+  } else if (!is.null(facet_row) | !is.null(facet_col)) {
+    facet_args$ncol <- NULL
+    facet_args$nrow <- NULL
+    facet_args <- dropNullsOrEmpty(facet_args)
+
+    if (length(facet_args) > 0) {
+      facet <- paste0("facet_grid(vars(", facet_row, "), vars(", facet_col, "), facet_args)")
+      ggcall <- paste0(ggcall, " + ", facet)
+    } else {
+      facet <- paste0("facet_grid(vars(", facet_row, "), vars(", facet_col, "))")
+      ggcall <- paste0(ggcall, " + ", facet)
+    }
+  }
+
   # Load geoms
   if (length(geom) == 1)
     geom_args <- setNames(list(geom_args), geom)
-  
+
   for (g in geom) {
     g_args <- dropNulls(geom_args[[g]])
-    
+
     if (!grepl("^geom_", g)){
       g <- paste0("geom_", g)
     }
-    
+
     if (grepl("geom_density_ridges", g)){
       g <- paste0("ggridges::", g)
     }
-    
+
     if(length(g_args) != 0){
       g_args <- deparse(g_args)
       g_args <- gsub("^list", "", g_args)
-      g <- paste0(g, g_args)  
+      g_args <- gsub("alpha = 1L, ", "", g_args)
+
+      if(g == "geom_point") {
+        g_args <- gsub("size = 1.5", "", g_args)
+        g_args <- gsub('shape = "circle"', "", g_args)
+      }
+
+      g_args <- gsub(", ,", ",", g_args)
+      g_args <- gsub(", \\)", "\\)", g_args)
+
+      g <- paste0(g, g_args)
     } else {
       g <- paste0(g, "()")
     }
-    
+
     ggcall <- paste0(ggcall, " + ", g)
   }
-  
+
   # load scales
   if (!is.null(scales)) {
     if (length(scales) == 1 && !isTRUE(grepl(scales, names(scales_args))))
@@ -122,21 +160,34 @@ ggcall <- function(data = NULL,
         #   s <- paste0("scale_", s)
         s_args <- deparse(s_args)
         s_args <- gsub("^list", "", s_args)
-        
+
         scl <- paste0(s, s_args)
       }
       ggcall <- paste0(ggcall, " + ", scl)
     }
   }
-  
+
+  # limits options
+  if (has_length(xlim, 2)) {
+    xlim <- as.list(xlim)
+    ggcall <- paste0(ggcall, " + scale_x_continuous_e61(limits = c(", xlim[1], ",", xlim[2], "))")
+  }
+  if (has_length(ylim, 2)) {
+    ylim <- as.list(ylim)
+    ggcall <- paste0(ggcall, " + scale_y_continuous_e61(limits = c(", ylim[1], ",", ylim[2], "))")
+  }
+
   # labels
   labs <- dropNullsOrEmpty(labs)
   if (length(labs) > 0) {
-    labs <- paste0("labs(", labs, ")")
-    
+
+    labs <- deparse(labs)
+    labs <- gsub("^list", "", labs)
+    labs <- paste0("labs_e61", labs)
+
     ggcall <- paste0(ggcall, " + ", labs)
   }
-  
+
   # coordinates
   if (!is.null(coord)) {
     if (!grepl("^coord_", coord))
@@ -144,62 +195,27 @@ ggcall <- function(data = NULL,
 
     ggcall <- paste0(ggcall, " + ", coord)
   }
-  
+
   # theme
-  if (!is.null(theme)) {
+  if (!is.null(theme) & theme != "theme_e61") {
     ggcall <- paste0(ggcall, " + ", theme, "()")
   }
-  
+
   if (!any(c("fill", "colour", "color", "size", "shape") %in% names(mapping))) {
     theme_args$legend.position <- NULL
   }
-  
+
   theme_args <- dropNullsOrEmpty(theme_args)
   if (length(theme_args) > 0) {
     theme_args <- call2("theme", !!!theme_args)
-    
+
     ggcall <- paste0(ggcall, " + ", theme_args)
   }
-  
-  # facet options
-  if (!is.null(facet)) {
-    facet_args <- dropNullsOrEmpty(facet_args)
-    if (length(facet_args) > 0) {
-      facet <- paste0("facet_wrap(vars(", facet, "), ", facet_args, ")")
-      ggcall <- paste0(ggcall, " + ", facet)
-    } else {
-      facet <- paste0("facet_wrap(vars(", facet, "))")
-      ggcall <- paste0(ggcall, " + ", facet)
-    }
-  
-  } else if (!is.null(facet_row) | !is.null(facet_col)) {
-    facet_args$ncol <- NULL
-    facet_args$nrow <- NULL
-    facet_args <- dropNullsOrEmpty(facet_args)
-    
-    if (length(facet_args) > 0) {
-      facet <- paste0("facet_grid(vars(", facet_row, "), vars(", facet_col, "), facet_args)")
-      ggcall <- paste0(ggcall, " + ", facet)
-    } else {
-      facet <- paste0("facet_grid(vars(", facet_row, "), vars(", facet_col, "))")
-      ggcall <- paste0(ggcall, " + ", facet)
-    }
-  }
-  
-  # xlim options
-  if (has_length(xlim, 2)) {
-    xlim <- as.list(xlim)
-    ggcall <- paste0(ggcall, " + xlim(", xlim[1], ",", xlim[2], ")")
-  }
-  if (has_length(ylim, 2)) {
-    ylim <- as.list(ylim)
-    ggcall <- paste0(ggcall, " + ylim(", ylim[1], ",", ylim[2], ")")
-  }
-  
+
   # add e61 logo
   if(add_logo)
     ggcall <- paste0(ggcall, " + add_e61_logo()")
-  
+
   ggcall
 }
 
