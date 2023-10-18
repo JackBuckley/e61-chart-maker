@@ -207,9 +207,28 @@ ggcall <- function(data = NULL,
 
   theme_args <- dropNullsOrEmpty(theme_args)
   if (length(theme_args) > 0) {
-    theme_args <- call2("theme", !!!theme_args)
 
-    ggcall <- paste0(ggcall, " + ", theme_args)
+    # check for e61 specific theme options
+    for(i in seq_along(theme_args)){
+
+      if(names(theme_args)[i] == "legend.position"){
+
+        ggcall <- paste0(ggcall, " + theme_e61(legend = '", theme_args[[i]], "')")
+        theme_args[[i]] <- NULL
+      }
+    }
+
+    theme_args <- dropNullsOrEmpty(theme_args)
+
+    # if there are still remaining arguments, then call them inside the regular theme
+    if(length(theme_args) > 0){
+
+      theme_args <- deparse(theme_args)
+      theme_args <- gsub("^list", "", theme_args)
+      theme_args <- paste0("theme", theme_args)
+
+      ggcall <- paste0(ggcall, " + ", theme_args)
+    }
   }
 
   # add e61 logo
