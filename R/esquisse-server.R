@@ -166,6 +166,7 @@ esquisse_server <- function(id,
             y = input$dragvars$target$yvar
           )
         )
+
         geom_possible$x <- c("auto", geoms)
 
         geom_controls$x <- select_geom_controls(input$geom, geoms)
@@ -308,15 +309,22 @@ esquisse_server <- function(id,
         scales_args <- scales$args
         scales <- scales$scales
 
-        if (isTRUE(controls_rv$transX$use)) {
-          scales <- c(scales, "x_continuous")
-          scales_args <- c(scales_args, list(x_continuous = controls_rv$transX$args))
+        # if (isTRUE(controls_rv$transX$use)) {
+        #   scales <- c(scales, "x_continuous")
+        #   scales_args <- c(scales_args, list(x_continuous = controls_rv$transX$args))
+        # }
+
+        # trans Y is now used as y-positioning variable
+        if (isTRUE(controls_rv$transY$use)) {
+          position <- controls_rv$transY$args
+
+          names(position) <- "position"
         }
 
-        if (isTRUE(controls_rv$transY$use)) {
-          scales <- c(scales, "y_continuous")
-          scales_args <- c(scales_args, list(y_continuous = controls_rv$transY$args))
-        }
+        # if (isTRUE(controls_rv$transY$use)) {
+        #   scales <- c(scales, "y_continuous")
+        #   scales_args <- c(scales_args, list(y_continuous = controls_rv$transY$args))
+        # }
 
         if (isTRUE(controls_rv$limits$x)) {
           xlim <- controls_rv$limits$xlim

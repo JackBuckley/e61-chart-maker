@@ -146,6 +146,7 @@ esquisserServer <- function(input,
         y = input$dragvars$target$yvar
       )
     )
+
     geom_possible$x <- c("auto", geoms)
 
     geom_controls$x <- select_geom_controls(input$geom, geoms)
@@ -159,7 +160,7 @@ esquisserServer <- function(input,
 
   observeEvent(geom_possible$x, {
     geoms <- c(
-      "auto", "line", "area", "bar", "histogram",
+      "auto", "line", "area", "bar", "col", "histogram",
       "point", "boxplot", "violin", "density",
       "tile", "sf", "density_ridges"
     )

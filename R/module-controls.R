@@ -197,9 +197,7 @@ controls_server <- function(id,
         updateTextInput(session = session, inputId = "labs_footnote", value = character(0))
         updateTextInput(session = session, inputId = "labs_source", value = character(0))
         updateTextInput(session = session, inputId = "labs_x", value = character(0))
-        updateTextInput(session = session, inputId = "axis_x", value = character(0))
         updateTextInput(session = session, inputId = "labs_y", value = character(0))
-        updateTextInput(session = session, inputId = "axis_y", value = character(0))
         updateTextInput(session = session, inputId = "labs_fill", value = character(0))
         updateTextInput(session = session, inputId = "labs_color", value = character(0))
         updateTextInput(session = session, inputId = "labs_size", value = character(0))
@@ -279,7 +277,8 @@ controls_server <- function(id,
       })
 
       observeEvent(type$x, {
-        toggleDisplay(id = ns("controls-position"), display = type$x %in% c("bar", "line", "area"))
+
+        toggleDisplay(id = ns("controls-position"), display = type$x %in% c("col", "bar", "line", "area"))
         toggleDisplay(id = ns("controls-histogram"), display = type$x %in% "histogram")
         toggleDisplay(id = ns("controls-density"), display = type$x %in% c("density", "violin"))
         toggleDisplay(id = ns("controls-scatter"), display = type$x %in% "point")
@@ -942,13 +941,6 @@ controls_params <- function(ns) {
         inputId = ns("xlim"),
         label = i18n("X-Axis limits (empty for none):"),
         value = c(NA, NA)
-      ),
-      selectInput(
-        inputId = ns("transX"),
-        label = i18n("X-Axis transform:"),
-        selected = "identity",
-        choices = scales_trans,
-        width = "100%"
       )
     ),
     tags$div(
@@ -957,13 +949,6 @@ controls_params <- function(ns) {
         inputId = ns("ylim"),
         label = i18n("Y-Axis limits (empty for none):"),
         value = c(NA, NA)
-      ),
-      selectInput(
-        inputId = ns("transY"),
-        label = i18n("Y-Axis transform:"),
-        selected = "identity",
-        choices = scales_trans,
-        width = "100%"
       )
     ),
     tags$div(
@@ -1062,8 +1047,10 @@ controls_code <- function(ns, insert_code = FALSE) {
 select_geom_controls <- function(x, geoms) {
   if (length(x) < 1)
     return("auto")
-  if ("bar" %in% geoms & x %in% c("auto", "bar", "col")) {
+  if ("bar" %in% geoms & x %in% c("auto", "bar")) {
     "bar"
+  } else if ("col" %in% geoms & x %in% c("auto", "col")) {
+    "col"
   } else if ("histogram" %in% geoms & x %in% c("auto", "histogram")) {
     "histogram"
   } else if ("density" %in% geoms & x %in% c("auto", "density")) {

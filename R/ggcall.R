@@ -44,7 +44,8 @@ ggcall <- function(data = NULL,
                    facet_col = NULL,
                    facet_args = list(),
                    xlim = NULL,
-                   ylim = NULL) {
+                   ylim = NULL,
+                   position = NULL) {
 
   show_legend <- F
 
@@ -125,6 +126,10 @@ ggcall <- function(data = NULL,
 
     if (grepl("geom_density_ridges", g)){
       g <- paste0("ggridges::", g)
+    }
+
+    if (grepl("geom_col", g) && !is.null(position)){
+      g_args <- append(g_args, position)
     }
 
     if(length(g_args) != 0){

@@ -94,17 +94,17 @@ potential_geoms_ref <- function() {
       "continuous",  "empty",       "boxplot",   "0",
       "continuous",  "empty",       "violin",    "0",
       "continuous",  "empty",       "density",   "0",
-      "discrete",    "empty",       "bar",       "1",
+      "discrete",    "empty",       "col",       "0",
       "time",        "empty",       "histogram", "1",
-      "time",        "empty",       "bar",       "0",
+      "time",        "empty",       "col",       "0",
       "continuous",  "discrete",    "boxplot",   "0",
       "continuous",  "discrete",    "point",     "0",
       "continuous",  "discrete",    "jitter",    "0",
       "continuous",  "discrete",    "violin",    "0",
       "continuous",  "discrete",    "density_ridges",    "0",
-      "continuous",  "discrete",    "bar",       "1",
-      "discrete",    "continuous",  "col",       "1",
-      "discrete",    "continuous",  "bar",       "0",
+      "continuous",  "discrete",    "col",       "0",
+      "discrete",    "continuous",  "col",       "0",
+      "discrete",    "continuous",  "col",       "0",
       "discrete",    "continuous",  "boxplot",   "0",
       "discrete",    "continuous",  "point",     "0",
       "discrete",    "continuous",  "jitter",    "0",
@@ -114,12 +114,13 @@ potential_geoms_ref <- function() {
       "continuous",  "continuous",  "line",      "0",
       "continuous",  "continuous",  "step",      "0",
       "continuous",  "continuous",  "area",      "0",
+      "continuous",  "continuous",  "col",       "0",
       "discrete",    "discrete",    "tile",      "1",
       "time",        "continuous",  "line",      "1",
       "time",        "continuous",  "point",     "0",
       "time",        "continuous",  "step",      "0",
       "time",        "continuous",  "area",      "0",
-      "time",        "continuous",  "bar",       "0",
+      "time",        "continuous",  "col",       "0",
       "empty",       "continuous",  "line",      "1",
       "empty",       "continuous",  "step",      "0",
       "empty",       "continuous",  "area",      "0",
@@ -133,8 +134,6 @@ potential_geoms_ref <- function() {
   x$auto <- as.numeric(x$auto)
   return(x)
 }
-
-
 
 
 
@@ -195,7 +194,7 @@ match_geom_args <- function(geom, args, add_aes = TRUE, mapping = list(), envir 
     args$position <- NULL
   }
 
-  if (!geom %in% c("bar", "histogram")) {
+  if (!geom %in% c("bar", "col", "histogram")) {
     args$position <- NULL
   }
 
