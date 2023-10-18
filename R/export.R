@@ -400,14 +400,10 @@ download_plot_rv <- function(input, rv, device) {
     content = function(file) {
       width <- input$width
       height <- input$height
-      ggsave(
+      save_e61(
         filename = file,
         plot = rv$plot,
-        device = device,
-        dpi = 72,
-        width = width / 72,
-        height = height / 72,
-        scale = 1
+        chart_type = "MN"
       )
     }
   )
@@ -434,15 +430,20 @@ download_plot_fun <- function(fun, device, filename, session) {
       height <- session$clientData[[height]]
       if (identical(device, "pdf") && isTRUE(capabilities("cairo")))
         device <- grDevices::cairo_pdf
-      ggsave(
+      save_e61(
         filename = file,
         plot = fun(),
-        device = device,
-        dpi = 72,
-        width = width / 72,
-        height = height / 72,
-        scale = 1
+        chart_type = "MN"
       )
+      # ggsave(
+      #   filename = file,
+      #   plot = fun(),
+      #   device = device,
+      #   dpi = 72,
+      #   width = width / 72,
+      #   height = height / 72,
+      #   scale = 1
+      # )
     }
   )
 }

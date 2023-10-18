@@ -196,7 +196,7 @@ ggcall <- function(data = NULL,
     ggcall <- paste0(ggcall, " + ", coord)
   }
 
-  # theme
+  # theme - if it's not theme_e61
   if (!is.null(theme) & theme != "theme_e61") {
     ggcall <- paste0(ggcall, " + ", theme, "()")
   }
