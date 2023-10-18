@@ -46,6 +46,8 @@ ggcall <- function(data = NULL,
                    xlim = NULL,
                    ylim = NULL) {
 
+  show_legend <- F
+
   # Load data
   if (is.null(data))
     return(expr(ggplot()))
@@ -136,7 +138,9 @@ ggcall <- function(data = NULL,
       }
 
       g_args <- gsub(", ,", ",", g_args)
-      g_args <- gsub(", \\)", "\\)", g_args)
+      g_args <- gsub("\\(\\s+,\\s+\\)", "()", g_args)
+      g_args <- gsub("\\s*,\\s*\\)", ")", g_args)
+      g_args <- gsub("\\(\\s*,\\s*", "(", g_args)
 
       g <- paste0(g, g_args)
     } else {
@@ -181,8 +185,22 @@ ggcall <- function(data = NULL,
   labs <- dropNullsOrEmpty(labs)
   if (length(labs) > 0) {
 
+    if(!is.null(labs$color) || !is.null(labs$fill))
+      show_legend <- T
+
     labs <- deparse(labs)
+
+    if(length(labs) > 1){
+      labs <- paste(labs, collapse = "")
+      labs <- gsub("\\s+", " ", labs)
+    }
+
     labs <- gsub("^list", "", labs)
+    labs <- gsub("color", "colour", labs)
+    # changing the two below manually because I made a mistake and I'm lazy
+    labs <- gsub("footnote \\=", "footnotes \\=", labs)
+    labs <- gsub("source \\=", "sources \\=", labs)
+
     labs <- paste0("labs_e61", labs)
 
     ggcall <- paste0(ggcall, " + ", labs)
@@ -203,9 +221,13 @@ ggcall <- function(data = NULL,
 
   if (!any(c("fill", "colour", "color", "size", "shape") %in% names(mapping))) {
     theme_args$legend.position <- NULL
+  } else {
+    theme_args$legend.title <- NULL
   }
 
   theme_args <- dropNullsOrEmpty(theme_args)
+  e61_theme_args <- list()
+
   if (length(theme_args) > 0) {
 
     # check for e61 specific theme options
@@ -213,11 +235,25 @@ ggcall <- function(data = NULL,
 
       if(names(theme_args)[i] == "legend.position"){
 
-        ggcall <- paste0(ggcall, " + theme_e61(legend = '", theme_args[[i]], "')")
+        e61_theme_args[[length(e61_theme_args) + 1]] <- paste0("legend = '", theme_args[[i]], "'")
+
         theme_args[[i]] <- NULL
       }
     }
 
+    # add a legend title if required
+    if(!is.null(show_legend) && show_legend)
+      e61_theme_args[[length(e61_theme_args) + 1]] <- "legend_title = T"
+
+    # Add theme_e61 args
+    if(length(e61_theme_args > 0)){
+      e61_theme_args <- unlist(e61_theme_args)
+      e61_theme_args <- paste(e61_theme_args, collapse = ", ")
+
+      ggcall <- paste0(ggcall, " + theme_e61(", e61_theme_args, ")")
+    }
+
+    # Add the other theme args
     theme_args <- dropNullsOrEmpty(theme_args)
 
     # if there are still remaining arguments, then call them inside the regular theme

@@ -114,7 +114,6 @@ potential_geoms_ref <- function() {
       "continuous",  "continuous",  "line",      "0",
       "continuous",  "continuous",  "step",      "0",
       "continuous",  "continuous",  "area",      "0",
-      "continuous",  "continuous",  "bar",       "1",
       "discrete",    "discrete",    "tile",      "1",
       "time",        "continuous",  "line",      "1",
       "time",        "continuous",  "point",     "0",

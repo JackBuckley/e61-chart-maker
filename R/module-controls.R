@@ -194,7 +194,8 @@ controls_server <- function(id,
       observeEvent(data_table(), {
         updateTextInput(session = session, inputId = "labs_title", value = character(0))
         updateTextInput(session = session, inputId = "labs_subtitle", value = character(0))
-        updateTextInput(session = session, inputId = "labs_caption", value = character(0))
+        updateTextInput(session = session, inputId = "labs_footnote", value = character(0))
+        updateTextInput(session = session, inputId = "labs_source", value = character(0))
         updateTextInput(session = session, inputId = "labs_x", value = character(0))
         updateTextInput(session = session, inputId = "axis_x", value = character(0))
         updateTextInput(session = session, inputId = "labs_y", value = character(0))
@@ -347,7 +348,8 @@ controls_server <- function(id,
           y = input$labs_y %empty% NULL,
           title = input$labs_title %empty% NULL,
           subtitle = input$labs_subtitle %empty% NULL,
-          caption = input$labs_caption %empty% NULL,
+          footnote = input$labs_footnote %empty% NULL,
+          source = input$labs_source %empty% NULL,
           fill = labs_fill %empty% NULL,
           color = labs_color %empty% NULL,
           size = labs_size %empty% NULL,
@@ -419,7 +421,8 @@ controls_server <- function(id,
         inputs <- reactiveValuesToList(input)
         title <- get_labs_options(inputs, "title")
         subtitle <- get_labs_options(inputs, "subtitle")
-        caption <- get_labs_options(inputs, "caption")
+        footnote <- get_labs_options(inputs, "footnote")
+        source <- get_labs_options(inputs, "source")
         x <- get_labs_options(inputs, "x")
         y <- get_labs_options(inputs, "y")
         outputs$theme <- list(
@@ -429,7 +432,7 @@ controls_server <- function(id,
               legend.position = if(input$legend_position != "none") input$legend_position,
               plot.title = title,
               plot.subtitle = subtitle,
-              plot.caption = caption,
+              plot.caption = footnote,
               axis.title.y = y,
               axis.title.x = x
             )
@@ -502,7 +505,7 @@ controls_server <- function(id,
 
 #' Controls for labs
 #'
-#' Set title, subtitle, caption, xlab, ylab
+#' Set title, subtitle, footnotes, xlab, ylab
 #'
 #' @param ns Namespace from module
 #'
@@ -525,10 +528,16 @@ controls_labs <- function(ns) {
       defaults = get_labs_defaults("subtitle")
     ),
     labs_options_input(
-      inputId = ns("labs_caption"),
-      placeholder = i18n("Caption"),
-      label = i18n("Caption:"),
-      defaults = get_labs_defaults("caption")
+      inputId = ns("labs_footnote"),
+      placeholder = i18n("Footnote"),
+      label = i18n("Footnote:"),
+      defaults = get_labs_defaults("footnote")
+    ),
+    labs_options_input(
+      inputId = ns("labs_source"),
+      placeholder = i18n("Source"),
+      label = i18n("Source:"),
+      defaults = get_labs_defaults("source")
     ),
     labs_options_input(
       inputId = ns("labs_x"),
@@ -541,18 +550,6 @@ controls_labs <- function(ns) {
       placeholder = i18n("Y label"),
       label = i18n("Y label:"),
       defaults = get_labs_defaults("y")
-    ),
-    labs_options_input(
-      inputId = ns("axis_y"),
-      placeholder = i18n("Y axis"),
-      label = i18n("Y axis:"),
-      defaults = get_labs_defaults("y")
-    ),
-    labs_options_input(
-      inputId = ns("axis_x"),
-      placeholder = i18n("X axis"),
-      label = i18n("X axis:"),
-      defaults = get_labs_defaults("x")
     ),
     tags$div(
       id = ns("controls-labs-fill"),
@@ -645,21 +642,20 @@ labs_options_input <- function(inputId, label, placeholder, defaults = list()) {
   )
 }
 
-get_labs_defaults <- function(name = c("title", "subtitle", "caption", "x", "y")) {
+get_labs_defaults <- function(name = c("title", "subtitle", "footnote", "source", "x", "y")) {
   name <- match.arg(name)
   defaults_labs <- list(
     title = list(size = 20L, face = "bold", hjust = 0), # theme_get()$plot.title
     subtitle = list(size = 16L, face = "plain", hjust = 0), # theme_get()$plot.subtitle
-    caption = list(size = 9L, face = "plain", hjust = 1), # theme_get()$plot.caption
+    footnote = list(size = 9L, face = "plain", hjust = 1), # theme_get()$plot.caption
+    source = list(size = 9L, face = "plain", hjust = 1), # theme_get()$plot.caption
     x = list(size = 14L, face = "plain", hjust = 0.5),
-    y = list(size = 14L, face = "plain", hjust = 0.5),
-    y_axis = list(size = 14L, face = "plain", hjust = 0.5),
-    x_axis = list(size = 14L, face = "plain", hjust = 0.5)
+    y = list(size = 14L, face = "plain", hjust = 0.5)
   )
   defaults_labs[[name]]
 }
 
-get_labs_options <- function(inputs, name = c("title", "subtitle", "caption", "x", "y")) {
+get_labs_options <- function(inputs, name = c("title", "subtitle", "footnote", "source", "x", "y")) {
   name <- match.arg(name)
   defaults <- get_labs_defaults(name)
   inputs <- inputs[paste0("labs_", name, c("_size", "_face", "_align"))]
@@ -717,48 +713,48 @@ controls_appearance <- function(ns) {
   )
 
   tagList(
-    tags$div(
-      id = ns("controls-fill-color"), style = "display: block;",
-      shinyWidgets::colorPickr(
-        inputId = ns("fill_color"),
-        label = i18n("Color:"),
-        theme = "monolith",
-        update = "changestop",
-        inline = TRUE,
-        swatches = head(unlist(cols, use.names = FALSE), 9),
-        preview = FALSE,
-        interaction = list(
-          hex = FALSE,
-          rgba = FALSE,
-          input = TRUE,
-          save = FALSE,
-          clear = FALSE
-        ),
-        width = "100%"
-      )
-    ),
-    tags$div(
-      id = ns("controls-palette"), style = "display: none;",
-      palette_ui(ns("colors"))
-    ),
-    tags$div(
-      id = ns("controls-ribbon-color"), style = "display: none;",
-      colorPickr(
-        inputId = ns("color_ribbon"),
-        selected = "#A4A4A4",
-        label = i18n("Ribbon color:"),
-        theme = "nano",
-        useAsButton = TRUE,
-        update = "save",
-        interaction = list(
-          hex = FALSE,
-          rgba = FALSE,
-          input = TRUE,
-          save = TRUE,
-          clear = FALSE
-        )
-      )
-    ),
+    # tags$div(
+    #   id = ns("controls-fill-color"), style = "display: block;",
+    #   shinyWidgets::colorPickr(
+    #     inputId = ns("fill_color"),
+    #     label = i18n("Color:"),
+    #     theme = "monolith",
+    #     update = "changestop",
+    #     inline = TRUE,
+    #     swatches = head(unlist(cols, use.names = FALSE), 9),
+    #     preview = FALSE,
+    #     interaction = list(
+    #       hex = FALSE,
+    #       rgba = FALSE,
+    #       input = TRUE,
+    #       save = FALSE,
+    #       clear = FALSE
+    #     ),
+    #     width = "100%"
+    #   )
+    # ),
+    # tags$div(
+    #   id = ns("controls-palette"), style = "display: none;",
+    #   palette_ui(ns("colors"))
+    # ),
+    # tags$div(
+    #   id = ns("controls-ribbon-color"), style = "display: none;",
+    #   colorPickr(
+    #     inputId = ns("color_ribbon"),
+    #     selected = "#A4A4A4",
+    #     label = i18n("Ribbon color:"),
+    #     theme = "nano",
+    #     useAsButton = TRUE,
+    #     update = "save",
+    #     interaction = list(
+    #       hex = FALSE,
+    #       rgba = FALSE,
+    #       input = TRUE,
+    #       save = TRUE,
+    #       clear = FALSE
+    #     )
+    #   )
+    # ),
     tags$div(
       id = ns("controls-shape"), style = "display: none;",
       pickerInput(

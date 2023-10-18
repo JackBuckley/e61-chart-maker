@@ -261,13 +261,13 @@ esquisse_server <- function(id,
           data = data,
           reverse = controls_rv$colors$reverse
         )
-        
+
         if (identical(input$geom, "auto")) {
           geom <- "blank"
         } else {
           geom <- input$geom
         }
-        
+
         if(input$geom == "density_ridges"){
           geom_args <- match_geom_args(input$geom, controls_rv$inputs, mapping = mapping, envir = "ggridges")
         } else {
@@ -289,7 +289,7 @@ esquisse_server <- function(id,
           )
 
         }
-        
+
         if (!is.null(aes_input$ymin) & !is.null(aes_input$ymax) & input$geom %in% c("line")) {
           geom <- c("ribbon", geom)
           mapping_ribbon <- aes_input[c("ymin", "ymax")]
@@ -303,11 +303,11 @@ esquisse_server <- function(id,
           mapping$ymin <- NULL
           mapping$ymax <- NULL
         }
-        
-        
+
+
         scales_args <- scales$args
         scales <- scales$scales
-        
+
         if (isTRUE(controls_rv$transX$use)) {
           scales <- c(scales, "x_continuous")
           scales_args <- c(scales_args, list(x_continuous = controls_rv$transX$args))
@@ -328,9 +328,9 @@ esquisse_server <- function(id,
         } else {
           ylim <- NULL
         }
-        
+
         data_name <- data_chart$name %||% "data"
-        
+
         gg_call <- ggcall(
           data = data_name,
           mapping = mapping,
@@ -354,7 +354,7 @@ esquisse_server <- function(id,
 
         # save text
         ggplotCall$code <- gg_call
-        
+
         # convert to an expression
         gg_call <- eval(parse(text = gg_call))
         ggplotCall$call <- gg_call
@@ -363,7 +363,7 @@ esquisse_server <- function(id,
           expr = expr((!!gg_call) %+% !!sym("esquisse_data")),
           data = setNames(list(data, data), c("esquisse_data", data_chart$name))
         )
-        
+
         ggplotCall$ggobj$plot
       }, filename = "esquisse-plot")
 
